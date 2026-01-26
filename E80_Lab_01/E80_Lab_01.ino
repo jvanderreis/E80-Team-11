@@ -1,8 +1,9 @@
 /********
-Default E80 Code
+Modified E80 Code for Team 11
 Current Author:
-    Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
+    Jack Van der Reis (jvanderreis@g.hmc.edu) '28 (contributed in 2026)
 Previous Contributors:
+    Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
     Christopher McElroy (cmcelroy@g.hmc.edu) '19 (contributed in 2017)  
     Josephine Wong (jowong@hmc.edu) '18 (contributed in 2016)
     Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)                    

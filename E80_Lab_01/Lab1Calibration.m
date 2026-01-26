@@ -1,4 +1,5 @@
 % Script 1: Calibration & Stats
+% Author: Jack Van der Reis
 % Requirements: Flat on table Log (Number unknown) and Side Log (Number
 % unknown)
 clear; clc; close all;

@@ -83,7 +83,7 @@ void loop() {
   }
 
   else if (currentTime < (7000)) {
-    // S1: Dive for 3 seconds
+    // S1: Dive for 3 seconds aaaa
     // Note: if in testing robot goes up, flip sign for motor C
     motorDriver.drive(0, 0, 150); 
   }

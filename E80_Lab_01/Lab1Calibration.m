@@ -76,6 +76,7 @@ fprintf('The mean for Z acceleration at rest is %.4f m/s^2 with a confidence int
 % T-Test 1: Zero X vs Zero Y
 [h, p] = ttest2(ZeroX, ZeroY);
 fprintf('X vs Y: P-Value is %.4e\n', p);
+
 % T-Test 2: Zero X vs Zero Z (Using Side Data for Z)
 [h2, p2] = ttest2(ZeroX, ZeroZ);
 fprintf('X vs Z: P-Value is %.4e\n', p2);

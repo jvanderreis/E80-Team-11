@@ -11,6 +11,9 @@ Previous Contributors:
 
 /* Libraries */
 
+// lab 1 acceleration
+
+
 // general
 #include <Arduino.h>
 #include <Wire.h>

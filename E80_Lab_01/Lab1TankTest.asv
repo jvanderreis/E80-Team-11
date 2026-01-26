@@ -78,7 +78,9 @@ grid on; hold on;
 if PrimaryAxis == 'Y'
     y_limits = ylim;
     yline(TheoreticalPeak, '--r', 'Theoretical Peak', 'LineWidth', 1.5, 'LabelHorizontalAlignment', 'left');
-    text(CropStart + (CropEnd-CropStart)/2, y_limits(2)*0.8,sprintf('Measured Peak: %.3f m/s^2', MeasuredPeak));
+    text(CropStart + (CropEnd-CropStart)/2, y_limits(2)*0.8, ...
+        sprintf('Measured Peak: %.3f m/s^2', MeasuredPeak), ...
+        'BackgroundColor', 'white', 'EdgeColor', 'black');
 end
 
 % Z Plot

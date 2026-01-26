@@ -74,10 +74,36 @@ void loop() {
   //       void motorDriver.drive(int motorA_power,int motorB_power,int motorC_power); 
   // the value of motorX_power can range from -255 to 255, and sets the PWM applied to the motor 
   // The following example will turn on motor B for four seconds between seconds 4 and 8 
-  if (currentTime > 4000 && currentTime <8000) {
-    motorDriver.drive(0,120,0);
-  } else {
-    motorDriver.drive(0,0,0);
+  
+  // For lab time, motor A will be the left motor, motor B will be the right motor, motor C will be the vertical motor
+  if (currentTime < 4000) {
+    // S0: Wait for 4 seconds, if robot is neutrally bouyant it should just hover around water surface
+    motorDriver.drive(0, 0, 0); 
+  }
+
+  else if (currentTime < (7000)) {
+    // S1: Dive for 3 seconds
+    // Note: if in testing robot goes up, flip sign for motor C
+    motorDriver.drive(0, 0, 150); 
+  }
+
+  else if (currentTime < 13000) {
+    // S2: Forward for 6 seconds
+    // Activate port and starboard motors (left and right)
+    // If robot yaws left, turn down right motor power
+    // If robot yaws right, turn down left motor power
+    motorDriver.drive(200, 200, 0); 
+  } 
+
+  else if (currentTime < 17000) {
+    // S3: Move robot to surface for 4 seconds, will just power past surface if too fast
+    // Activate motor C, if state 1 needs flipping, flip sign here as well
+    motorDriver.drive(0, 0, -150); 
+  } 
+
+  else {
+    // S4 Halt
+    motorDriver.drive(0, 0, 0); 
   }
 
   // DONT CHANGE CODE BELOW THIS LINE 

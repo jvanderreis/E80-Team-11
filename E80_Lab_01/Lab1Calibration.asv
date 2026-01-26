@@ -4,7 +4,7 @@
 clear; clc; close all;
 
 % Load Flat File
-filenum = '001';
+filenum = '001'; 
 logreader; 
 ZeroX = accelX; ZeroY = accelY; GravityZ = accelZ;
 
@@ -63,9 +63,7 @@ Z0se = Z0std / sqrt(Z0n);
 ConfidenceLowerZ0 = Z0mean - (1.96 * Z0se);
 ConfidenceUpperZ0 = Z0mean + (1.96 * Z0se);
 
-fprintf('The mean for X acceleration at rest is %.4f m/s^2 with a confidence interval of [%.4f, %.4f]. This confirms the null hypothesis that the robot remains near zero acceleration on the X axis when at rest\n', Xmean, ConfidenceLowerX, ConfidenceUpperX)
-fprintf('The mean for Y acceleration at rest is %.4f m/s^2 with a confidence interval of [%.4f, %.4f]. This confirms the null hypothesis that the robot remains near zero acceleration on the Y axis when at rest\n', Ymean, ConfidenceLowerY, ConfidenceUpperY)
-fprintf('The mean for Z acceleration at rest is %.4f m/s^2 with a confidence interval of [%.4f, %.4f]. This confirms the null hypothesis that the robot remains near zero acceleration on the Z axis when at rest\n', Z0mean, ConfidenceLowerZ0, ConfidenceUpperZ0)
+fprintf('The mean for X acceleration at rest is %.4f m/s^2 with a confidence interval of [%.4f, %.4f]. This confirms the null hypothesis that ')
 
 % T-Tests determine if "zero" results are statistically
 % similar and therefore accurate (e.g. H0 = X and Y are similar, Ha = X and Y

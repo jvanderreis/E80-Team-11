@@ -1,10 +1,8 @@
-function [data] = logreader(filenum)
-
 % logreader.m
 % Use this script to read data from your micro SD card
 
-% clear;
-% clf;
+%clear;
+%clf;
 
 %filenum = '003'; % file number for the data you want to read
 infofile = strcat('INF', filenum, '.TXT');
@@ -49,9 +47,5 @@ fclose(fid);
 
 %% Process your data here
 
-data = struct();
-for i = 1:numel(varNames)
-    data.(varNames{i}) = eval(varNames{i});
-end
 
-end
+

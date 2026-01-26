@@ -3,8 +3,6 @@
 % unknown)
 clear; clc; close all;
 
-
-
 % Load Flat File
 filenum = '001'; 
 logreader; 
@@ -45,16 +43,12 @@ fprintf('The 95%% CI Bounds are [%.4f, %.4f]\n', ConfidenceLower, ConfidenceUppe
 
 % T-Test 1: Zero X vs Zero Y
 [h, p] = ttest2(ZeroX, ZeroY);
-fprintf('X vs Y: P-Value is %.4e (h=%d) -> ', p, h);
-if h==1, fprintf('Different\n'); else, fprintf('Similar\n'); end
-
+fprintf('X vs Y: P-Value is %.4e', p);
 % T-Test 2: Zero X vs Zero Z (Using Side Data for Z)
 [h2, p2] = ttest2(ZeroX, ZeroZ);
-fprintf('X vs Z: P-Value is %.4e (h=%d) -> ', p2, h2);
-if h2==1, fprintf('Different\n'); else, fprintf('Similar\n'); end
+fprintf('X vs Z: P-Value is %.4e', p2);
 
 % T-Test 3: Zero Y vs Zero Z (Using Side Data for Z)
 [h3, p3] = ttest2(ZeroY, ZeroZ);
-fprintf('Y vs Z: P-Value is %.4e (h=%d) -> ', p3, h3);
-if h3==1, fprintf('Different\n'); else, fprintf('Similar\n'); end
+fprintf('Y vs Z: P-Value is %.4e', p3);
 

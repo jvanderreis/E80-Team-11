@@ -1,9 +1,9 @@
-% Script 1: Calibration & Stats
+% Script 1: Calibration & Stats (Modified for 3 Tests)
 % Author: Jack Van der Reis
 % Requirements: 
-% Test 1 (001): Flat (Z facing Up) -> Gives Zero X, Zero Y, Gravity Z
-% Test 2 (002): Side (X facing Up) -> Gives Zero Y, Zero Z, Gravity X
-% Test 3 (003): Front/Back (Y facing Up) -> Gives Zero X, Zero Z, Gravity Y
+%   Test 1 (001): Flat (Z facing Up) -> Gives Zero X, Zero Y, Gravity Z
+%   Test 2 (002): Side (X facing Up) -> Gives Zero Y, Zero Z, Gravity X
+%   Test 3 (003): Front/Back (Y facing Up) -> Gives Zero X, Zero Z, Gravity Y
 
 clear; clc; close all;
 
@@ -66,6 +66,10 @@ fprintf('The 95%% CI Bounds are [%.4f, %.4f]\n', ConfidenceLowerZ, ConfidenceUpp
 
 % X, Y, and Z Axis Confidence Intervals when No Acceleration
 
+TrueX = ZeroX * Scale_Factor;
+TrueY = ZeroY * Scale_Factor;
+TrueZ0 = ZeroZ * Scale_Factor;
+
 Xmean = mean(True_ZeroX_1);
 Xstd = std(True_ZeroX_1);
 Xn = length(True_ZeroX_1);
@@ -88,21 +92,19 @@ fprintf('Zero X (Test 1): Mean %.4f m/s^2, CI [%.4f, %.4f]\n', Xmean, Confidence
 fprintf('Zero Y (Test 1): Mean %.4f m/s^2, CI [%.4f, %.4f]\n', Ymean, ConfidenceLowerY, ConfidenceUpperY);
 fprintf('Zero Z (Test 2): Mean %.4f m/s^2, CI [%.4f, %.4f]\n\n', Z0mean, ConfidenceLowerZ0, ConfidenceUpperZ0);
 
-% T-Tests to determine if the zero reading is statistically different
+% T-Tests to determine if the zero reading is statistically diff
 
-% T-Test 1: Zero X vs Zero Y (Test 1)
-[h, p] = ttest2(ZeroX_Test1, ZeroY_Test1);
+% T-Test 1: Zero X vs Zero Y
+[h, p] = ttest2(ZeroX, ZeroY);
 fprintf('X vs Y: P-Value is %.4e\n', p);
 
-% T-Test 2: Zero Y vs Zero Z
-[h2, p2] = ttest2(ZeroY_Test2, ZeroZ_Test2);
-fprintf('Y vs Z: P-Value is %.4e\n', p2);
+% T-Test 2: Zero X vs Zero Z (Using Side Data for Z)
+[h2, p2] = ttest2(ZeroX, ZeroZ);
+fprintf('X vs Z: P-Value is %.4e\n', p2);
 
-
-% T-Test 3: Zero X vs Zero Z (Test 3)
-[h3, p3] = ttest2(ZeroX_Test3, ZeroZ_Test3);
-fprintf('X vs Z: P-Value is %.4e\n', p3);
-
+% T-Test 3: Zero Y vs Zero Z (Using Side Data for Z)
+[h3, p3] = ttest2(ZeroY, ZeroZ);
+fprintf('Y vs Z: P-Value is %.4e\n', p3);
 
 % Graphs for Submission
 
@@ -111,23 +113,26 @@ figure(1); clf;
 % Subplot 1: Zero X (Test 1)
 subplot(2,2,1); 
 plot(True_ZeroX_1);
-title('Zero Acceleration Due to Gravity, X Axis'); 
-ylabel('Acceleration (m/s^2)');
+title('Zero X Acceleration'); 
+ylabel('Accel (m/s^2)');
+legend('Test 1', 'Test 3');
 
 % Subplot 2: Zero Y (Test 1)
 subplot(2,2,2); 
 plot(True_ZeroY_1);
-title('Zero Acceleration Due to Gravity, Y Axis'); 
-ylabel('Acceleration (m/s^2)');
+title('Zero Y Acceleration'); 
+ylabel('Accel (m/s^2)');
+legend('Test 1', 'Test 2');
 
-% Subplot 3: Zero Z (Test 2)
+% Subplot 3: Zero Z (Comparison of both tests)
 subplot(2,2,3); 
 plot(True_ZeroZ_2);
-title('Zero Acceleration Due to Gravity, Z Axis'); 
-ylabel('Acceleration (m/s^2)');
+title('Zero Z Acceleration'); 
+ylabel('Accel (m/s^2)');
+legend('Test 2', 'Test 3');
 
-% Subplot 4: Gravity Z (Test 1)
+% Subplot 4: Gravity Z (From Test 1)
 subplot(2,2,4); 
 plot(True_GravityZ_1); 
-title('Acceleration Due to Gravity, Z Axis'); 
-ylabel('Acceleration (m/s^2)');
+title('Accel Due to Gravity Z (Flat)'); 
+ylabel('Accel (m/s^2)');

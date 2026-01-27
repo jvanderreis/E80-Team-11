@@ -79,6 +79,7 @@ void loop() {
   // For lab time, motor A will be the left motor, motor B will be the right motor, motor C will be the vertical motor
   if (currentTime < 4000) {
     // S0: Wait for 4 seconds, if robot is neutrally bouyant it should just hover around water surface
+    // !! MODIFY TO VERY LONG TIME FOR CALIBRATION TESTING, REVERT AT TANK !!
     motorDriver.drive(0, 0, 0); 
   }
 

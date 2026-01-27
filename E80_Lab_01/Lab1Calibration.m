@@ -10,20 +10,20 @@ clear; clc; close all;
 % Load Data from 3 Separate Tests
 
 % Load Test 1 (Flat, Z Up)
-filenum = '001';
+filenum = '005';
 logreader; 
 ZeroX_Test1 = accelX; 
 ZeroY_Test1 = accelY; 
 GravityZ_Test1 = accelZ;
 
-% Load Test 2 (Side, X Up)
-filenum = '002';
+% Load Test 2 (Back/Front, X Up)
+filenum = '006';
 logreader;
 ZeroY_Test2 = accelY; % Y is zero here
 ZeroZ_Test2 = accelZ; % Z is zero here
 
-% Load Test 3 (Front/Back, Y Up)
-filenum = '003';
+% Load Test 3 (Side, Y Up)
+filenum = '007';
 logreader;
 ZeroX_Test3 = accelX; % X is zero here
 ZeroZ_Test3 = accelZ; % Z is zero here
@@ -91,16 +91,16 @@ fprintf('Zero Z (Test 2): Mean %.4f m/s^2, CI [%.4f, %.4f]\n\n', Z0mean, Confide
 % T-Tests to determine if the zero reading is statistically different
 
 % T-Test 1: Zero X vs Zero Y (Test 1)
-[h, p] = ttest2(ZeroX_Test1, ZeroY_Test1);
+[h, p] = ttest(ZeroX_Test1, ZeroY_Test1);
 fprintf('X vs Y: P-Value is %.4e\n', p);
 
 % T-Test 2: Zero Y vs Zero Z
-[h2, p2] = ttest2(ZeroY_Test2, ZeroZ_Test2);
+[h2, p2] = ttest(ZeroY_Test2, ZeroZ_Test2);
 fprintf('Y vs Z: P-Value is %.4e\n', p2);
 
 
 % T-Test 3: Zero X vs Zero Z (Test 3)
-[h3, p3] = ttest2(ZeroX_Test3, ZeroZ_Test3);
+[h3, p3] = ttest(ZeroX_Test3, ZeroZ_Test3);
 fprintf('X vs Z: P-Value is %.4e\n', p3);
 
 

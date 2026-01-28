@@ -6,23 +6,23 @@
 clear; clc; close all;
 
 % FILL IN WHEN CALCULATED/TESTED
-filenum = '005'; % Change to log file from most successful obstacle course attempt
+filenum = ['003']; % Change to log file from most successful obstacle course attempt
 RobotMass = 2.5; % Change when weighed
 logreader;
 
 % Calibration values from Lab1Calibration.m, modify once calculated
 
-Scale_Factor = 0.002; % Replace with your calculated Teensy Scale Factor
-BiasX = 0.0000; % Replace with your ZeroX Mean
-BiasY = 0.0000; % Replace with your ZeroY Mean
-BiasZ = 0.0000; % Replace with your ZeroZ Mean
+Scale_Factor = 0.0010652; % Replace with your calculated Teensy Scale Factor
+BiasX = -0.2668; % Replace with your ZeroX Mean
+BiasY = 0.0592; % Replace with your ZeroY Mean
+BiasZ = 0.5151; % Replace with your ZeroZ Mean
 
 AccelXReal = (accelX * Scale_Factor) - BiasX;
 AccelYReal = (accelY * Scale_Factor) - BiasY;
 AccelZReal = (accelZ * Scale_Factor) - BiasZ;
 
-CropStart = 1; % Run code once then look at graph and change to when robot starts schmoving
-CropEnd = length(accelX); % Same thing just for the end, replace value for both
+CropStart = 430; % Run code once then look at graph and change to when robot starts schmoving
+CropEnd = 770; % Same thing just for the end, replace value for both
 
 Samples = (CropStart:CropEnd)';
 RunX = AccelXReal(CropStart:CropEnd);

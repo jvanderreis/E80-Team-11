@@ -12,21 +12,21 @@ clear; clc; close all;
 % Load Test 1 (Flat, Z Up)
 filenum = '005';
 logreader; 
-ZeroX_Test1 = accelX; 
-ZeroY_Test1 = accelY; 
+ZeroX_Test1 = double(accelX); 
+ZeroY_Test1 = double(accelY); 
 GravityZ_Test1 = accelZ;
 
 % Load Test 2 (Back/Front, X Up)
 filenum = '006';
 logreader;
-ZeroY_Test2 = accelY; % Y is zero here
-ZeroZ_Test2 = accelZ; % Z is zero here
+ZeroY_Test2 = double(accelY); % Y is zero here
+ZeroZ_Test2 = double(accelZ); % Z is zero here
 
 % Load Test 3 (Side, Y Up)
 filenum = '007';
 logreader;
-ZeroX_Test3 = accelX; % X is zero here
-ZeroZ_Test3 = accelZ; % Z is zero here
+ZeroX_Test3 = double(accelX); % X is zero here
+ZeroZ_Test3 = double(accelZ); % Z is zero here
 
 % Calculate Teensy Scale Factor (WRITE DOWN!)
 mean_1g = mean(GravityZ_Test1);

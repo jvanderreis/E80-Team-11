@@ -1,13 +1,15 @@
+% Lab1TankTest.m 
 % Script 2: Obstacle Course Analysis
 % Author: Jack Van der Reis
-% Analyzes motion data in tank, denotes acceleration peaks, and compares to
-% theoretical predictions
+% Analyzes acceleration motion data in tank through utilization of calibration values
+% and plots data on a single plot for easy viewing. Implements a maximum
+% thrust calculation
 
 clear; clc; close all;
 
 % FILL IN WHEN CALCULATED/TESTED
-filenum = ['003']; % Change to log file from most successful obstacle course attempt
-RobotMass = 2.5; % Change when weighed
+filenum = '003'; % Change to log file from most successful obstacle course attempt
+RobotMass = 3.2; % Change when weighed
 logreader;
 
 % Calibration values from Lab1Calibration.m, modify once calculated
@@ -21,7 +23,7 @@ AccelXReal = (accelX * Scale_Factor) - BiasX;
 AccelYReal = (accelY * Scale_Factor) - BiasY;
 AccelZReal = (accelZ * Scale_Factor) - BiasZ;
 
-CropStart = 430; % Run code once then look at graph and change to when robot starts schmoving
+CropStart = 600; % Run code once then look at graph and change to when robot starts schmoving
 CropEnd = 770; % Same thing just for the end, replace value for both
 
 Samples = (CropStart:CropEnd)';
@@ -44,6 +46,23 @@ MeasuredPeakY = max(abs(RunY));
 MeasuredPeak = max(MeasuredPeakX,MeasuredPeakY);
 
 figure(1); clf;
+
+% All accelerations One Plot
+figure(1);
+plot(Samples, RunX, 'LineWidth', 2);
+hold on;
+plot(Samples, RunY, 'LineWidth', 2);
+plot(Samples, RunZ, 'LineWidth', 2);
+grid on;
+xlabel('Sample Number')
+ylabel('Acceleration [m/s^2]')
+title('Acceleration versus Sample Number');
+xlim([CropStart CropEnd]);
+legend('X Acceleration','Y Acceleration','Z Acceleration')
+hold off;
+
+
+%{
 
 % X Plot
 subplot(3,1,1);
@@ -76,3 +95,5 @@ grid on; hold on;
 fprintf('Theoretical Peak: %.4f m/s^2 (from F_net = ma)\n', TheoreticalPeak);
 fprintf('Measured Peak: %.4f m/s^2\n', MeasuredPeak);
 fprintf('Difference: %.4f m/s^2\n', abs(TheoreticalPeak - MeasuredPeak));
+
+%}

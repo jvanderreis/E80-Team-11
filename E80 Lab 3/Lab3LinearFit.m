@@ -8,8 +8,8 @@ voltage = Data(:,2); %y-axis for linear plot, measures voltage ratios
 
 
 format long %for more precision
-l = length(turbidity);
-padded = [[ones(l),1)]' [turbidity]']; %this adds a column of ones to facilitate calculating the intercept
+
+padded = [ones(length(turbidity),1) turbidity]; %this adds a column of ones to facilitate calculating the intercept
 
 regression = padded\voltage; %regression with y-intercept value
 

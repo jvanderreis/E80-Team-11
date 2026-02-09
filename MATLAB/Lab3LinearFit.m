@@ -1,8 +1,8 @@
 %Linear fitter for lab 3
 %Written by Sonia Berliner
 scopeData = readtable('"filename".csv', 'PreserveVariableNames', true) % filename is a placeholder, fill it in with the name of the file being analyzed
-sampleNumber = scopeData(;,1) % x-axis for the linear plot, name may change depending on what we are measuring
-output = scopeData(;,2) %y-axis for linear plot
+sampleNumber = scopeData(:,1); % x-axis for the linear plot, name may change depending on what we are measuring
+output = scopeData(:,2); %y-axis for linear plot
 
 format long %for more precision
 

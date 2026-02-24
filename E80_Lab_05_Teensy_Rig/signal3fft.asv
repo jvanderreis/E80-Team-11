@@ -38,6 +38,13 @@ ylabel('Magnitude (V)');
 xlim([0 100000]); 
 grid on;
 
+fbeacs = [9000, 11000, 13000];
+M = zeros(length(fbeacs), 1); %vector to store magnitude of beacon freqs
+
+for i = 1: length(fbeacs)
+    bins = abs(f - fbeacs(i)) < 50; %bandwith taken as 50 hz to right or left of beacon frequency
+    M(i) = max(P1(bins));   %taking max of P1(fft mag) for values that r true (within +-50 Hz) in bins for fbeac value
+end
 
 
 

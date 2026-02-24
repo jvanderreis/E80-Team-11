@@ -34,8 +34,8 @@ legend('show'); grid on; hold off;
 
 % BEACON 3
 frequencyb3 = ?; % Update after identified
-distb3 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30, 0.33]; 
-voltageb3 = [0, 0, 0, 0, 0, 0, 0]; 
+distb3 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; 
+voltageb3 = [0, 0, 0, 0, 0, 0]; 
 
 constantb3 = voltageb3(1) * distb3(1);
 dist_smoothb3 = linspace(min(distb3), max(distb3), 100);

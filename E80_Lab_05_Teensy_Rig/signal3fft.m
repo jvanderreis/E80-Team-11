@@ -37,8 +37,3 @@ ylabel('Magnitude (V)');
 % Set the x-axis limit to 100 kHz to match the scope's 100 kHz span setting
 xlim([0 100000]); 
 grid on;
-
-
-
-
-

@@ -1,7 +1,7 @@
 % BEACON 1
-frequencyb1 = ?; % Beacon 1 Frequency in Hz
-distb1 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; % Distances in meters (3 cm spacing)
-voltageb1 = [0, 0, 0, 0, 0, 0]; % FFT Peak Voltage (Fill in your data here)
+frequencyb1 = 9000; % Beacon 1 Frequency in Hz
+distb1 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30, 0.33]; % Distances in meters (3 cm spacing)
+voltageb1 = [0, 0, 0, 0, 0, 0, 0]; % FFT Peak Voltage (Fill in your data here)
 
 % Calculate the Analytical Model (V = k/d)
 constantb1 = voltageb1(1) * distb1(1); % Calculate k using the first data point
@@ -18,8 +18,8 @@ legend('show'); grid on; hold off;
 
 % BEACON 2
 frequencyb2 = ?; % Update after identified
-distb2 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; 
-voltageb2 = [0, 0, 0, 0, 0, 0]; 
+distb2 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30, 0.33]; 
+voltageb2 = [0, 0, 0, 0, 0, 0, 0]; 
 
 constantb2 = voltageb2(1) * distb2(1);
 dist_smoothb2 = linspace(min(distb2), max(distb2), 100);

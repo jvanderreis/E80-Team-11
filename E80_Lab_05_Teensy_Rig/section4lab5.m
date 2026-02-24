@@ -4,7 +4,7 @@ distb1 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; % Distances in meters (3 cm spaci
 voltageb1 = [0, 0, 0, 0, 0, 0]; % FFT Peak Voltage (Fill in your data here)
 
 % Calculate the Analytical Model (V = k/d)
-constantb1 = voltageb1(1) * distb1(1); % Calculate k using the first data point
+constantb1 = voltageb1(1) * distb1(1); % Calculate constant that accounts for volume, sensitivity, and gain
 dist_smoothb1 = linspace(min(distb1), max(distb1), 100); 
 voltage_modelb1 = constantb1 ./ dist_smoothb1;
 

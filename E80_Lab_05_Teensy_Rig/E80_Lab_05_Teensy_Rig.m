@@ -1,6 +1,6 @@
 %% Lab 5 Interface
 
-samplingFreq = 100E3; % Hz [100E3 max]
+samplingFreq = 26E3; % Hz [100E3 max]
 numSamples = 1000; % the higher this is the longer sampling will take
 
 bytesPerSample = 2; % DO NOT CHANGE
@@ -14,7 +14,7 @@ end
 
 % Modify first argument of serial to match Teensy port under Tools tab of Arduino IDE.  Second to match baud rate.
 % Note that the timeout is set to 60 to accommodate long sampling times.
-s = serial('COM10','BaudRate',115200); 
+s = serial('/dev/cu.usbmodem107867201','BaudRate',115200); 
 set(s,{'InputBufferSize','OutputBufferSize'},{numSamples*bytesPerSample,4});
 s.Timeout = 60; 
 

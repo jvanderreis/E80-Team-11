@@ -1,7 +1,8 @@
 % BEACON 1
-frequencyb1 = ?; % Beacon 1 Frequency in Hz
-distb1 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; % Distances in meters (3 cm spacing)
-voltageb1 = [0, 0, 0, 0, 0, 0]; % FFT Peak Voltage (Fill in your data here)
+frequencyb1 = 9000; % Beacon 1 Frequency in Hz
+distb1 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48, 0.51, 0.54, 0.57, 0.60, 0.63, 0.66]; % Distances in meters (3 cm spacing)
+voltageb1 = [6, 7, 3, 4.5, 2.5, 4, 3.5, 1.1, 1, 3, 3, 1, 2.5, 2.5, 2, 1.5, 1, 2]; % FFT Peak Voltage (Fill in your data here)
+voltageb1 = 0.001.*voltageb1;
 
 % Calculate the Analytical Model (V = k/d)
 constantb1 = voltageb1(1) * distb1(1); % Calculate constant that accounts for volume, sensitivity, and gain
@@ -13,37 +14,5 @@ figure; hold on;
 plot(dist_smoothb1, voltage_modelb1, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Analytical Model (V=k/d)');
 scatter(distb1, voltageb1, 50, 'b', 'filled', 'DisplayName', 'Measured Data (Multipath)');
 title(sprintf('Received Voltage vs. Distance (%d Hz Beacon)', frequencyb1));
-xlabel('Distance from Beacon (meters)'); ylabel('Voltage Magnitude (V)');
-legend('show'); grid on; hold off;
-
-% BEACON 2
-frequencyb2 = ?; % Update after identified
-distb2 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; 
-voltageb2 = [0, 0, 0, 0, 0, 0]; 
-
-constantb2 = voltageb2(1) * distb2(1);
-dist_smoothb2 = linspace(min(distb2), max(distb2), 100);
-voltage_modelb2 = constantb2 ./ dist_smoothb2;
-
-figure; hold on;
-plot(dist_smoothb2, voltage_modelb2, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Analytical Model (V=k/d)');
-scatter(distb2, voltageb2, 50, 'b', 'filled', 'DisplayName', 'Measured Data (Multipath)');
-title(sprintf('Received Voltage vs. Distance (%d Hz Beacon)', frequencyb2));
-xlabel('Distance from Beacon (meters)'); ylabel('Voltage Magnitude (V)');
-legend('show'); grid on; hold off;
-
-% BEACON 3
-frequencyb3 = ?; % Update after identified
-distb3 = [0.15, 0.18, 0.21, 0.24, 0.27, 0.30]; 
-voltageb3 = [0, 0, 0, 0, 0, 0]; 
-
-constantb3 = voltageb3(1) * distb3(1);
-dist_smoothb3 = linspace(min(distb3), max(distb3), 100);
-voltage_modelb3 = constantb3 ./ dist_smoothb3;
-
-figure; hold on;
-plot(dist_smoothb3, voltage_modelb3, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Analytical Model (V=k/d)');
-scatter(distb3, voltageb3, 50, 'b', 'filled', 'DisplayName', 'Measured Data (Multipath)');
-title(sprintf('Received Voltage vs. Distance (%d Hz Beacon)', frequencyb3));
 xlabel('Distance from Beacon (meters)'); ylabel('Voltage Magnitude (V)');
 legend('show'); grid on; hold off;

@@ -4,8 +4,8 @@ data = readmatrix(filename);
 
 % Extract time and voltage vectors, if csv file has different column order,
 % swap 1 & 2 with whatever necessary.
-t = data(3:end, 1);
-v = data(3:end, 2);
+t = data(:, 1);
+v = data(:, 2);
 
 % Calculate sample rate (fs) and number of samples (N)
 N = length(v);

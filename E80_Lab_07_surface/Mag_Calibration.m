@@ -28,6 +28,8 @@ my = zeros(numSamples*numAquisitions,1);
 mz = zeros(numSamples*numAquisitions,1);
 % three four-byte floats per sample
 bytesPerSample = 12; 
+dt = 0.099; 
+time = (0:(numSamples*numAquisitions)-1)' * dt;
 disp("Rotate Motherboard into as many orientations as possible");
 
 %% Initialize Serial Port
@@ -117,7 +119,29 @@ disp(c);
 disp('Soft Iron Compensation Matrix:');
 disp(U);
 
+% Calculate Headings in Radians (Requirement: Heading vs. Time)
+heading_uncal = atan2(my, mx);
+heading_cal = atan2(my_cal, mx_cal);
 
+% FIGURE 3: Superimposed XY Plane (Requirement: Checkbox 2)
+figure(3);
+plot(mx, my, 'r.', 'MarkerSize', 8); hold on;
+plot(mx_cal, my_cal, 'b.', 'MarkerSize', 8);
+axis equal; grid on;
+xlabel('Magnetic Induction X (mG)');
+ylabel('Magnetic Induction Y (mG)');
+title('Superimposed XY Plane: Calibrated vs Uncalibrated');
+legend('Uncalibrated', 'Calibrated', 'Location', 'best');
+
+% FIGURE 4: Heading vs. Time (Requirement: Checkbox 3)
+figure(4);
+plot(time, heading_uncal, 'r--', 'LineWidth', 1.2); hold on;
+plot(time, heading_cal, 'b-', 'LineWidth', 1.5);
+grid on;
+xlabel('Time (seconds)');
+ylabel('Heading (radians)');
+title('Superimposed Heading vs. Time');
+legend('Uncalibrated Heading', 'Calibrated Heading', 'Location', 'best');
 
 %% Helper Functions
 

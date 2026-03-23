@@ -79,6 +79,7 @@ String SensorIMU::printRollPitchHeading(void) {
   printString += " heading: ";
   printString += String(state.heading);
   printString += "[deg]";
+  printString += " magX:" + String(state.magX);
   return printString; 
 }
 

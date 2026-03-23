@@ -23,15 +23,35 @@ void XYStateEstimator::updateState(imu_state_t * imu_state_p, gps_state_t * gps_
   if (gps_state_p->num_sat >= N_SATS_THRESHOLD){
     gpsAcquired = 1;
 
-    // set the values of state.x, state.y, and state.yaw
-    // It can make use of the constants RADIUS_OF_EARTH, origin_lat, origin_lon (see XYStateEstimator.h)
-    // You can access the current GPS latitude and longitude readings with gps_state_p->lat and gps_state_p->lon
-    // You can access the current imu heading with imu_state_p->heading
-    // Also note that math.h is already included so you have access to trig functions [rad]
-
     ///////////////////////////////////////////////////////////////////
     // INSERT YAW, X and Y CALCULATION HERE
     //////////////////////////////////////////////////////////////////
+
+    // 1. Convert all degree measurements to radians for the math functions
+    float lat_rad = gps_state_p->lat * (PI / 180.0);
+    float lon_rad = gps_state_p->lon * (PI / 180.0);
+    float origin_lat_rad = origin_lat * (PI / 180.0);
+    float origin_lon_rad = origin_lon * (PI / 180.0);
+
+    // 2. Forward Equirectangular Projection to get X and Y in meters
+    // state.y is the North/South distance from the origin
+    state.y = RADIUS_OF_EARTH * (lat_rad - origin_lat_rad);
+    
+    // state.x is the East/West distance (scaled by the cosine of the origin latitude)
+    state.x = RADIUS_OF_EARTH * (lon_rad - origin_lon_rad) * cos(origin_lat_rad);
+
+    // 3. Convert compass heading to standard math yaw
+    // Compass: 0 is North, increases Clockwise.
+    // Math (ENU): 0 is East, increases Counter-Clockwise.
+    float heading_rad = imu_state_p->heading * (PI / 180.0);
+    state.yaw = (PI / 2.0) - heading_rad;
+
+    // 4. Bound the yaw angle between -PI and PI 
+    if (state.yaw > PI) {
+      state.yaw -= 2.0 * PI;
+    } else if (state.yaw <= -PI) {
+      state.yaw += 2.0 * PI;
+    }
 
   }
   else{

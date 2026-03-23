@@ -52,10 +52,35 @@ void SurfaceControl::navigate(xy_state_t * state, gps_state_t * gps_state_p, int
     // You can access the x and y coordinates calculated in XYStateEstimator.cpp using state->x and state->y respectively
     // You can access the yaw calculated in XYStateEstimator.cpp using state->yaw
 
-    ///////////////////////////////////////////////////////////
-    // INSERT P CONTROL CODE HERE
-    ///////////////////////////////////////////////////////////
     
+  // 1. Store current yaw in the class variable for logging/printing
+    yaw = state->yaw;
+
+    // 2. Calculate desired yaw using atan2 (y, x)
+    yaw_des = atan2(y_des - state->y, x_des - state->x);
+
+    // 3. Calculate the error and use the included helper function to bound it between -PI and PI
+    float yaw_error = angleDiff(yaw_des - yaw);
+
+    // 4. Proportional Control math (u = Kp * error)
+    u = Kp * yaw_error;
+
+    // 5. Set motor values (using avgPower defined in SurfaceControl.h)
+    // A positive yaw_error means we need to turn Left (CCW). 
+    // To turn left, the Right motor needs more power.
+    uR = avgPower + u;
+    uL = avgPower - u;
+
+    // 6. Apply motor balance corrections (Kr and Kl)
+    uR = uR * Kr;
+    uL = uL * Kl;
+
+    // 7. Bound the outputs between 0 and 127 to protect the H-bridges
+    if (uR > 127) uR = 127;
+    if (uR < 0) uR = 0;
+    if (uL > 127) uL = 127;
+    if (uL < 0) uL = 0;
+
   }
   else {
     gpsAcquired = 0;

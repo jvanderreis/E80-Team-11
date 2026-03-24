@@ -31,10 +31,10 @@ void XYStateEstimator::updateState(imu_state_t * imu_state_p, gps_state_t * gps_
 
     // Forward Equirectangular Projection to get X and Y in meters
     // state.y is the North/South distance from the origin
-    state.y = RADIUS_OF_EARTH * (lat_rad - origin_lat_rad);
+    state.y = RADIUS_OF_EARTH_M * (lat_rad - origin_lat_rad);
     
     // state.x is the East/West distance (scaled by the cosine of the origin latitude)
-    state.x = RADIUS_OF_EARTH * (lon_rad - origin_lon_rad) * cos(origin_lat_rad);
+    state.x = RADIUS_OF_EARTH_M * (lon_rad - origin_lon_rad) * cos(origin_lat_rad);
 
     // Convert compass heading to standard math yaw
     // Compass: 0 is North, increases Clockwise.

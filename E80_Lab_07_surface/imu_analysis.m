@@ -2,7 +2,7 @@
 clear; clc;
 
 % Load Data
-filenum = '001'; % <-- Change this to your 0.5m slide test log number
+filenum = '000'; % <-- Change this to your 0.5m slide test log number
 logreader;       % Natively populates accelX, accelY into the workspace
 
 % Define Time and Constants
@@ -37,7 +37,7 @@ lower_bound = -0.5 * sigma_ay * (time.^2);
 figure(1);
 plot(px, py, 'b-', 'LineWidth', 2); hold on;
 % Plot the "Ideal" 0.5m path (Assuming you pushed it 0.5m along the X axis)
-plot([0, 0.5], [0, 0], 'k--', 'LineWidth', 2); 
+plot([0, 0.5], [0, 0], 'r', 'LineWidth', 2); 
 grid on;
 title('Calculated Position vs Ideal 0.5m Path');
 xlabel('X Position (meters)');

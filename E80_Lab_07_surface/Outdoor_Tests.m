@@ -12,7 +12,7 @@ filenum = '001'; % <-- CHANGE THIS: e.g. '001' for Loop Test, '002' for P-Contro
 logreader;
 
 dt = 0.099;
-time = (0:length(state_x)-1)' * dt;
+time = (0:length(lat)-1)' * dt;
 
 %% FIGURE 1: GPS Path Overlaid on Campus Map
 figure(1);
@@ -33,7 +33,7 @@ set(gca, 'YDir', 'normal'); % Ensures North points UP
 hold on;
 
 % Plot your actual recorded GPS path in bright yellow
-plot(state_x, state_y, 'y-', 'LineWidth', 2.5);
+plot(x, y, 'y-', 'LineWidth', 2.5);
 
 % Plot the Ideal P-Control Trajectory in dashed red
 % The waypoints are: (125,-40) to (150,-40) to (125,-40).

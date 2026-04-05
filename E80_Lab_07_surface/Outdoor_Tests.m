@@ -8,11 +8,34 @@
 
 clear; clc;
 
-filenum = '001'; % <-- CHANGE THIS: e.g. '001' for Loop Test, '002' for P-Control
+filenum = '004'; % <-- CHANGE THIS: e.g. '001' for Loop Test, '002' for P-Control
 logreader;
 
+% --- DATA TRUNCATION ---
+% Find the first index where the robot moves past y = -38.
+% (Assuming it starts near 0 and moves South towards -40)
+start_idx = find(y <= -38, 1, 'first');
+
+% Safety check: If the robot never hit -38, keep the original data
+if ~isempty(start_idx)
+    % Slice all necessary variables from the start index to the end
+    x       = x(start_idx:end);
+    y       = y(start_idx:end);
+    yaw     = yaw(start_idx:end);
+    yaw_des = yaw_des(start_idx:end);
+    u       = u(start_idx:end);
+    
+    % Note: If logreader.m imports other variables you need later 
+    % (like raw GPS lat/lon), make sure to slice them here too!
+else
+    disp('Warning: Target y = -38 was never reached. Using full dataset.');
+end
+% -----------------------
+
 dt = 0.099;
-time = (0:length(lat)-1)' * dt;
+% Because y is now shorter, time will automatically scale correctly 
+% and start at exactly t = 0 for your new data slice.
+time = (0:length(y)-1)' * dt;
 
 %% FIGURE 1: GPS Path Overlaid on Campus Map
 figure(1);
@@ -22,10 +45,11 @@ img = imread('HMC_Campus.png');
 % These numbers define the physical "box" in meters that your image covers.
 % Tweak these 4 values until your starting (0,0) point sits exactly 
 % outside Parsons, and your path aligns with the sidewalks.
-map_West  = -20;  % How many meters West of Parsons does the picture end?
-map_East  = 180;  % How many meters East does the picture go? (Needs to be > 150)
-map_South = -80;  % How many meters South? (Needs to be < -40)
-map_North = 60;   % How many meters North? 
+% TUNE YOUR MAP BOUNDARIES HERE
+map_West  = 65;   % Shifted right to move the mall under the data
+map_East  = 265;  % 
+map_South = -120; % Shifted down to move the mall under the data
+map_North = 20;   %
 
 % Stretch the image over your defined meter grid
 imshow(img, 'XData', [map_West, map_East], 'YData', [map_North, map_South]);

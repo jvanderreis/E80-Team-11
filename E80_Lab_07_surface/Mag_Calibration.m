@@ -35,7 +35,11 @@ disp("Rotate Motherboard into as many orientations as possible");
 %% Initialize Serial Port
 % Modify first argument to match the Teensy port under Tools tab of Arduino IDE
 % same baudrate as Teensy
+<<<<<<< Updated upstream
 s = serial('/dev/tty.usbmodem145649101','BaudRate',115200);
+=======
+s = serial('COM5','BaudRate',115200);
+>>>>>>> Stashed changes
 set(s,'InputBufferSize',bytesPerSample*numSamples);
 
 %% Read Data from IMU

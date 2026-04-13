@@ -40,14 +40,16 @@ const float ANEM_SLOPE = 2.1587;
 const float ANEM_INTERCEPT = 1.2119;
 
 // --- ANEMOMETER TRACKING (HIGH-RES LOGIC) ---
-volatile unsigned long lastPulseTime = 0;
-volatile unsigned long pulsePeriod = 0;
+volatile unsigned long lastPulseTime_us = 0;
+volatile unsigned long pulsePeriod_us = 0;
 
 void countWindPulse() {
-  unsigned long currentPulseTime = millis();
-  if (currentPulseTime - lastPulseTime > 5) {
-    pulsePeriod = currentPulseTime - lastPulseTime;
-    lastPulseTime = currentPulseTime;
+  unsigned long currentPulseTime_us = micros(); // Use microsecond precision!
+  
+  // 10000 microseconds = 10 ms debounce. Widen this slightly to ignore long-wire ringing
+  if (currentPulseTime_us - lastPulseTime_us > 10000) { 
+    pulsePeriod_us = currentPulseTime_us - lastPulseTime_us;
+    lastPulseTime_us = currentPulseTime_us;
   }
 }
 
@@ -162,6 +164,9 @@ void setup() {
 void loop() {
   unsigned long currentTime = millis();
   
+  // --- DYNAMIC TIMING: Run fast (100ms) if SD is missing, normal if logging ---
+  unsigned long activePeriod = logger.keepLogging ? LOOP_PERIOD : 100; 
+
   // Constantly read GPS UART stream
   gps.read(&GPS);
 
@@ -173,7 +178,8 @@ void loop() {
   }
     
   // --- 1. SENSOR SAMPLING LOOP ---
-  if ( currentTime - breadboardLastExecutionTime > LOOP_PERIOD ) {
+  // Uses activePeriod so sensors sample rapidly during debug
+  if ( currentTime - breadboardLastExecutionTime > activePeriod ) {
     breadboardLastExecutionTime = currentTime;
     
     // --- MUX (Sundial) ---
@@ -190,14 +196,16 @@ void loop() {
       else sundialB.ch[i - 8] = voltage;
     }
 
-    // --- Anemometer ---
+// --- Anemometer ---
     noInterrupts();
-    unsigned long safePulsePeriod = pulsePeriod;
-    unsigned long safeLastPulseTime = lastPulseTime;
+    unsigned long safePulsePeriod_us = pulsePeriod_us;
+    unsigned long safeLastPulseTime_us = lastPulseTime_us;
     interrupts();
     
-    if (safePulsePeriod > 0 && (currentTime - safeLastPulseTime) < 2000) {
-      current_wind_hz = 1000.0 / safePulsePeriod;
+    // Check if the pulse is less than 2 seconds (2,000,000 micros) old
+    if (safePulsePeriod_us > 0 && (micros() - safeLastPulseTime_us) < 2000000) {
+      // 1,000,000 microseconds in a second
+      current_wind_hz = 1000000.0 / safePulsePeriod_us; 
       weather.wind_vel = (ANEM_SLOPE * current_wind_hz) + ANEM_INTERCEPT; 
     } else {
       current_wind_hz = 0.0;
@@ -212,15 +220,12 @@ void loop() {
     weather.therm_water = calculateTemperature(current_water_v);   
 
     // --- Core Sensors ---
-    // --- IMU FIX 2: Protect I2C communication from Interrupts ---
-    noInterrupts();
     imu.read();
-    interrupts();
-    // gps.updateState(&GPS); // <-- Intentionally omitted to fix compile error
   }
 
   // --- 2. E80 PRINTER LOOP ---
-  if ( currentTime - printer.lastExecutionTime > LOOP_PERIOD ) {
+  // Uses activePeriod so the Serial Monitor updates rapidly during debug
+  if ( currentTime - printer.lastExecutionTime > activePeriod ) {
     printer.lastExecutionTime = currentTime;
     
     // Format GPS Status String
@@ -240,10 +245,10 @@ void loop() {
     printer.printValue(5, "IMU Heading: " + String(imu.state.heading, 2) + " deg");
     printer.printValue(6, "IMU MagX: " + String(imu.state.magX, 2) + " | MagY: " + String(imu.state.magY, 2));
 
-// --- ADD SUNDIAL TO E80 PRINTER ---
+    // --- ADD SUNDIAL TO E80 PRINTER ---
     String sunA = "Sun 0-7: ";
     for(int i=0; i<8; i++) {
-      sunA += String(sundialA.ch[i], 1) + " "; // 1 decimal place to save space
+      sunA += String(sundialA.ch[i], 1) + " "; 
     }
     printer.printValue(7, sunA);
 
@@ -258,6 +263,7 @@ void loop() {
   }
 
   // --- 3. E80 LOGGER LOOP ---
+  // Remains locked to LOOP_PERIOD so SD card doesn't get flooded if re-inserted
   if ( currentTime - logger.lastExecutionTime > LOOP_PERIOD && logger.keepLogging ) {
     logger.lastExecutionTime = currentTime;
     logger.log();

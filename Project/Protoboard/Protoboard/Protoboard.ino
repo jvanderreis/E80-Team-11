@@ -143,7 +143,6 @@ void setup() {
   // Initialize E80 Sensors
   gps.init(&GPS);
   
-  // --- IMU FIX 1: Initialize and force strict 100kHz I2C speed ---
   imu.init();
   Wire.setClock(100000); 
 

@@ -91,11 +91,32 @@ end
 fprintf('===================\n\n');
 
 %% --- 4. PLOT ---
-figure('Name', 'Simplified Sundial vs IMU', 'Position', [100, 100, 700, 400]);
+% FIGURE 1: Heading Comparison
+figure('Name', 'Simplified Sundial vs IMU', 'Position', [50, 100, 600, 400]);
 plot(time_sec, imu_heading, 'b-', 'LineWidth', 1.5); hold on;
 plot(time_sec, sundial_heading, 'r.', 'MarkerSize', 8);
 title('Sundial vs IMU Heading'); xlabel('Time (s)'); ylabel('Heading (deg)');
 legend('IMU', 'Sundial'); grid on; ylim([0 360]); yticks(0:45:360);
+
+% FIGURE 2: Raw Voltage of all 16 Channels
+figure('Name', 'Raw Phototransistor Voltages', 'Position', [700, 550, 600, 400]);
+plot(time_sec, pt_data, 'LineWidth', 1);
+title('Raw Phototransistor Voltages (All Channels)');
+xlabel('Time (s)'); ylabel('Voltage (V)');
+grid on;
+% Not adding a 16-item legend as it clutters the graph, but lines show the envelope perfectly.
+
+% FIGURE 3: Heatmap of the Shadow moving across the array
+figure('Name', 'Sundial Shadow Heatmap', 'Position', [700, 50, 600, 400]);
+% Transpose pt_data so time is X and channels are Y
+imagesc(time_sec, 0:15, pt_data'); 
+set(gca, 'YDir', 'normal'); % Keeps channel 0 at the bottom of the Y-axis
+colormap('parula'); % 'parula' or 'jet' are great for this
+c = colorbar; 
+c.Label.String = 'Voltage (V)';
+title('Sensor Array Heatmap: Tracking the Shadow');
+xlabel('Time (s)'); ylabel('Sensor Channel (0 to 15)');
+yticks(0:15);
 
 %% --- HELPER: SOLAR AZIMUTH ---
 function azimuth = calculateSolarAzimuth(yr, mo, da, hr, mi, se, lat, lon)

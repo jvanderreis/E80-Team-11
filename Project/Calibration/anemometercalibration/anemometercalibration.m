@@ -2,7 +2,7 @@
 clear; clc; close all;
 
 % --- 1. LOAD DATA ---
-filenum = '000'; % CHANGE THIS TO YOUR SD CARD FILE NUMBER
+filenum = '016'; % CHANGE THIS TO YOUR SD CARD FILE NUMBER
 logreader;
 
 % Use anem_freq from your WeatherSampler

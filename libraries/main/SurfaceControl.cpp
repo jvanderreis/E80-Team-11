@@ -9,19 +9,17 @@ inline float angleDiff(float a) {
 }
 
 SurfaceControl::SurfaceControl(void) 
-: DataSource("u,uL,uR,yaw,yaw_des","float,float,float,float,float"){}
-
+: DataSource("u,uL,uR,yaw,yaw_des,error_integral","float,float,float,float,float,float"){}
 
 void SurfaceControl::init(const int totalWayPoints_in, double * wayPoints_in, int navigateDelay_in) {
   totalWayPoints = totalWayPoints_in;
-  // create wayPoints array on the Heap so that it isn't erased once the main Arduino loop starts
-  wayPoints = new double[2*totalWayPoints]; // Create a 1-d array to hold the waypoints in the format x0,y0,x1,y1,...
+  wayPoints = new double[2*totalWayPoints]; 
   for (int i=0; i<totalWayPoints; i++) { 
     wayPoints[i] = wayPoints_in[i];
   }
   navigateDelay = navigateDelay_in;
-  if (totalWayPoints == 0) atPoint = 1; // not doing surface control
-  else atPoint = 0; // doing surface control
+  if (totalWayPoints == 0) atPoint = 1; 
+  else atPoint = 0; 
 }
 
 int SurfaceControl::getWayPoint(int dim) {
@@ -31,61 +29,49 @@ int SurfaceControl::getWayPoint(int dim) {
 void SurfaceControl::navigate(xy_state_t * state, gps_state_t * gps_state_p, int currentTime_in) {
   currentTime = currentTime_in;
 
-  if (gps_state_p->num_sat >= N_SATS_THRESHOLD) {
+  if (gps_state_p->num_sat >= 6) { // Bumped to 6 to mitigate ocean multipath error
     gpsAcquired = 1;
 
     updatePoint(state->x, state->y);
-    if (currentWayPoint == totalWayPoints) return; // stops motors at final surface point
+    if (currentWayPoint == totalWayPoints) return; 
     
     if (atPoint || delayed) {
       uL = 0; 
       uR = 0;
-      return; // stops motors at surface waypoint
+      return; 
     }
 
-    // set up variables
     int x_des = getWayPoint(0);
     int y_des = getWayPoint(1);
 
-    // Set the values of yaw_des, yaw, yaw_error, control effort (u), uL, and uR appropriately for P control
-    // You can use trig functions (atan2 might be useful)
-    // You can access the x and y coordinates calculated in XYStateEstimator.cpp using state->x and state->y respectively
-    // You can access the yaw calculated in XYStateEstimator.cpp using state->yaw
-
-    
-  // 1. Store current yaw in the class variable for logging/printing
     yaw = state->yaw;
-
-    // 2. Calculate desired yaw using atan2 (y, x)
     yaw_des = atan2(y_des - state->y, x_des - state->x);
+    yaw_error = angleDiff(yaw_des - yaw);
 
-    // 3. Calculate the error and use the included helper function to bound it between -PI and PI
-    float yaw_error = angleDiff(yaw_des - yaw);
+    // Anti-windup
+    if (abs(yaw_error) < 0.8) { 
+      error_integral += yaw_error; 
+    } else {
+      error_integral = 0; 
+    }
 
-    // 4. Proportional Control math (u = Kp * error)
-    u = Kp * yaw_error;
+    // PI Control math
+    u = (Kp * yaw_error) + (Ki * error_integral);
 
-    // 5. Set motor values (using avgPower defined in SurfaceControl.h)
-    // A positive yaw_error means we need to turn Left (CCW). 
-    // To turn left, the Right motor needs more power.
     uR = avgPower + u;
     uL = avgPower - u;
 
-    // 6. Apply motor balance corrections (Kr and Kl)
     uR = uR * Kr;
     uL = uL * Kl;
 
-    // 7. Bound the outputs between 0 and 127 to protect the H-bridges
     if (uR > 127) uR = 127;
     if (uR < 0) uR = 0;
     if (uL > 127) uL = 127;
     if (uL < 0) uL = 0;
-
   }
   else {
     gpsAcquired = 0;
   }
-
 }
 
 String SurfaceControl::printString(void) {
@@ -94,22 +80,12 @@ String SurfaceControl::printString(void) {
     printString += "SurfaceControl: Not in navigate state";
   }
   else if (!gpsAcquired) {
-    printString += "SurfaceControl: Waiting to acquire more satellites...";
+    printString += "SurfaceControl: Waiting for 6+ sats...";
   }
   else {
-    printString += "SurfaceControl: ";
-    printString += "Yaw_Des: ";
-    printString += String(yaw_des*180.0/PI);
-    printString += "[deg], ";
-    printString += "Yaw: ";
-    printString += String(yaw*180.0/PI);
-    printString += "[deg], ";
-    printString += "u: ";
-    printString += String(u);
-    printString += ", u_L: ";
-    printString += String(uL);
-    printString += ", u_R: ";
-    printString += String(uR);
+    printString += "SurfaceControl: Yaw_Des: " + String(yaw_des*180.0/PI) + "[deg], ";
+    printString += "Yaw: " + String(yaw*180.0/PI) + "[deg], u: " + String(u);
+    printString += ", u_L: " + String(uL) + ", u_R: " + String(uR);
   } 
   return printString;
 }
@@ -120,25 +96,19 @@ String SurfaceControl::printWaypointUpdate(void) {
     wayPointUpdate += "SurfaceControl: Not in navigate state";
   }
   else if (!gpsAcquired) {
-    wayPointUpdate += "SurfaceControl: Waiting to acquire more satellites...";
+    wayPointUpdate += "SurfaceControl: Waiting for 6+ sats...";
   }
   else if (delayed) {
-    wayPointUpdate += "SurfaceControl: Waiting for delay";
-    wayPointUpdate += String(currentWayPoint);
+    wayPointUpdate += "SurfaceControl: Waiting for delay " + String(currentWayPoint);
   }
   else {
-    wayPointUpdate += "SurfaceControl: ";
-    wayPointUpdate += "Current Waypoint: ";
-    wayPointUpdate += String(currentWayPoint);
-    wayPointUpdate += "; Distance from Waypoint: ";
-    wayPointUpdate += String(dist);
-    wayPointUpdate += "[m]";
+    wayPointUpdate += "SurfaceControl: Current WP: " + String(currentWayPoint) + "; Dist: " + String(dist) + "[m]";
   }
   return wayPointUpdate;
 }
 
 void SurfaceControl::updatePoint(float x, float y) {
-  if (currentWayPoint == totalWayPoints) return; // don't check if finished
+  if (currentWayPoint == totalWayPoints) return; 
 
   float x_des = getWayPoint(0);
   float y_des = getWayPoint(1);
@@ -148,21 +118,22 @@ void SurfaceControl::updatePoint(float x, float y) {
     String changingWPMessage = "";
     int cwpmTime = 20;
 
-    // navigateDelay
     if (delayStartTime == 0) delayStartTime = currentTime;
     if (currentTime < delayStartTime + navigateDelay) {
       delayed = 1;
-      changingWPMessage = "Got to surface waypoint " + String(currentWayPoint)
-        + ", waiting until delay is over";
+      changingWPMessage = "Got to surface waypoint " + String(currentWayPoint) + ", waiting until delay is over";
     }
     else {
       delayed = 0;
       delayStartTime = 0;
-      changingWPMessage = "Got to surface waypoint " + String(currentWayPoint)
-        + ", now directing to next point";
+      changingWPMessage = "Got to surface waypoint " + String(currentWayPoint) + ", now directing to next point";
       atPoint = 1;
       currentWayPoint++;
+      
+      // *** CRITICAL FIX: RESET INTEGRAL FOR NEW LEG ***
+      error_integral = 0; 
     }
+    
     if (currentWayPoint == totalWayPoints) {
       changingWPMessage = "Completed the surface path.";
       uR=0;
@@ -181,5 +152,6 @@ size_t SurfaceControl::writeDataBytes(unsigned char * buffer, size_t idx) {
   data_slot[2] = uR;
   data_slot[3] = yaw;
   data_slot[4] = yaw_des;
-  return idx + 5*sizeof(float);
+  data_slot[5] = error_integral; 
+  return idx + 6*sizeof(float);
 }
